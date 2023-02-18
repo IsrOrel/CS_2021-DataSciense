@@ -21,14 +21,14 @@ except:
     browser.quit()
 inputs = dstart=browser.find_elements(By.CLASS_NAME,"md-datepicker-input")
 inputs[0].clear()
-inputs[0].send_keys("1/11/2019")
+inputs[0].send_keys("1/11/2017")
 
 inputs[1].clear()
-inputs[1].send_keys("31/12/2022")
+inputs[1].send_keys("01/11/2018")
 stationbtn =browser.find_element(By.ID,"select_2")
 stationbtn.click()
 search=browser.find_element(By.CLASS_NAME,"demo-header-searchbox")
-search.send_keys("Dafna 11")
+search.send_keys("Dafna")
 # try:
 #    search1 = WebDriverWait(browser, 1*1000).until(
 #        EC.presence_of_element_located((By.CLASS_NAME,"md-checkbox-enable"))
@@ -36,9 +36,8 @@ search.send_keys("Dafna 11")
 #    search1.click()
 # except:
 #    browser.quit()
-serch1=browser.find_element(By.XPATH,"//md-option")
+[e.click() for e in browser.find_elements(By.XPATH,"//md-option") if e.text.startswith('Dafna 04') or e.text.startswith('Dafna 11')]
 # pprint([s.text for s in serch1])
-serch1.click()
 closebtn=browser.find_element(By.CLASS_NAME,"close_button")
 closebtn.click()
 checkallbtn=browser.find_elements(By.CLASS_NAME,"btn_check_all")
@@ -102,11 +101,11 @@ while(True):
         "Visibility": Visibility})
 
     data = pd.concat([data, pageDF])
-    print(f"@@@@@@@@@@@@ Number of rows: {len(data. index)}")
+    print(f"Number of rows: {len(data. index)}")
     nextbtn=browser.find_element(By.XPATH,"//button[@data-page='next']")
     if not nextbtn.is_enabled():
         break
 
     nextbtn.click()
 
-data.to_csv('project', index=False)   
+data.to_csv('project1', index=False)   
