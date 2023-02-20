@@ -18,11 +18,13 @@ from sklearn import neighbors, tree
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
+from mpl_toolkits.mplot3d import Axes3D
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix,make_scorer
 ###Here we read the file and convert the wind columns to numreic one
 ###It help us in the EDA procces 
 df=pd.read_csv("AfterCleaning_V2.csv")
 df1=df.copy()
+df1["OpenOrClose"] = df1["OpenOrClose"].map({"Open": 1, "Close": 0})
 df1['WindDirection'] = pd.to_numeric(df1['WindDirection'], errors='coerce')
 df1['WindSpeed'] = pd.to_numeric(df1['WindSpeed'], errors='coerce')
 ###In here we are define a figure and insert 8 subplot 
@@ -82,6 +84,11 @@ fig8.set_xlabel("CmSnow")
 fig8.set_ylabel("Frequency")
 plt.tight_layout()
 fig.show()
+###Pair plot pf the columns "Temperature", "CmSnow", "WindSpeed", "WindDirection", "OpenOrClose" with the column "OpenOrClose"
+cols = ["Temperature", "CmSnow", "WindSpeed", "WindDirection", "OpenOrClose"]
+df = df1[cols]
+sns.pairplot(df, hue="OpenOrClose")
+plt.show()
 ###Here we show a Boxplot of the column "OpenOrClose" with the column "Temperature"
 sns.boxplot(x="OpenOrClose", y="Temperature", data=df1,whis=3)
 plt.show()
@@ -94,14 +101,9 @@ plt.show()
 ###Here we show a Boxplot of the column "OpenOrClose" with the column "WindSpeed"
 sns.boxplot(x="OpenOrClose", y="WindSpeed", data=df1, whis=15)
 plt.show()
-###Pair plot pf the columns "Temperature", "CmSnow", "WindSpeed", "WindDirection", "OpenOrClose" with the column "OpenOrClose"
-cols = ["Temperature", "CmSnow", "WindSpeed", "WindDirection", "OpenOrClose"]
-df = df1[cols]
-sns.pairplot(df, hue="OpenOrClose")
-plt.show()
 
 ###Heat map of "WindSpeed", "WindDirection" with "OpenOrClose"
-df1["OpenOrClose"] = df1["OpenOrClose"].map({"Open": 1, "Close": 0})
+
 cols = ["WindSpeed", "WindDirection"]
 heatmap_data = df1.pivot_table(index=pd.cut(df1["WindSpeed"], bins=[0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, np.inf], include_lowest=True),
                                columns=pd.cut(df1["WindDirection"], bins=[0, 45, 90, 135, 180, 225, 270, 315, 360], include_lowest=True),
@@ -120,18 +122,6 @@ sns.heatmap(heatmap_data, cmap="Spectral",annot=True, fmt=".2f")
 plt.title("Heatmap of WindSpeed and CmSnow with Binary Color Scale")
 plt.show()
 
-
-fig = plt.figure(figsize=(10, 8))
-ax = fig.add_subplot(111, projection='3d')
-xs = df1['Temperature']
-ys = df1['CmSnow']
-zs = df1['OpenOrClose']
-colors = ['r' if x == 1 else 'b' for x in zs]
-ax.scatter(xs, ys, zs, c=colors)
-ax.set_xlabel('Temperature')
-ax.set_ylabel('CmSnow')
-ax.set_zlabel('OpenOrClose')
-plt.show()
 ###In the code below we split the "DateandTime" column to a 3 column:"Years","Month","Day","Hour"
 ###we do this because the muchine learining models cant work with a strings
 df1['DateandTime'] = pd.to_datetime(df1['DateandTime'], format="%Y-%m-%d %H:%M:%S")
